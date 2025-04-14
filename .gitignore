@@ -5,3 +5,4 @@ storage/
 .env/
 .env_dev/
 .env_test/
+.qodo
