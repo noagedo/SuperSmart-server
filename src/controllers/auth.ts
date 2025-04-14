@@ -279,69 +279,6 @@ const refresh = async (req: Request, res: Response) => {
   }
 };
 
-const updateCart = async (req: Request, res: Response) => {
-  try {
-    const userId = req.params.id;
-    const { productId, quantity } = req.body;
-
-    if (!productId || quantity === undefined) {
-      return res.status(400).send({ error: "Invalid input data" });
-    }
-
-    const user = await userModel.findById(userId);
-    if (!user) {
-      return res.status(404).send({ error: "User not found" });
-    }
-
-    const cartItemIndex = user.cart?.findIndex(
-      (item) => item.productId === productId
-    );
-
-    if (cartItemIndex !== undefined && cartItemIndex >= 0) {
-      // Update quantity if item exists in the cart
-      if (quantity > 0) {
-        user.cart![cartItemIndex].quantity = quantity;
-      } else {
-        // Remove item if quantity is 0
-        user.cart!.splice(cartItemIndex, 1);
-      }
-    } else if (quantity > 0) {
-      // Add new item to the cart
-      user.cart!.push({ productId, quantity });
-    }
-
-    await user.save();
-    res.status(200).send(user.cart);
-  } catch (error) {
-    console.error("Error updating cart:", error);
-    res.status(500).send({ error: "Internal server error" });
-  }
-};
-
-const deleteCartItem = async (req: Request, res: Response) => {
-  try {
-    const userId = req.params.id;
-    const { productId } = req.body;
-
-    if (!productId) {
-      return res.status(400).send({ error: "Product ID is required" });
-    }
-
-    const user = await userModel.findById(userId);
-    if (!user) {
-      return res.status(404).send({ error: "User not found" });
-    }
-
-    user.cart = user.cart?.filter((item) => item.productId !== productId) || [];
-    await user.save();
-
-    res.status(200).send(user.cart);
-  } catch (error) {
-    console.error("Error deleting cart item:", error);
-    res.status(500).send({ error: "Internal server error" });
-  }
-};
-
 type Payload = {
   _id: string;
 };
@@ -378,6 +315,4 @@ export default {
   refresh,
   logout,
   updateUser,
-  updateCart,
-  deleteCartItem,
 };

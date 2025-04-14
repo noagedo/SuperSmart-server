@@ -8,7 +8,6 @@ export interface iUser {
   refreshTokens?: string[];
   profilePicture?: string;
   googleId?: string;
-  cart?: { productId: string; quantity: number }[];
 }
 
 const userSchema = new mongoose.Schema<iUser>({
@@ -36,15 +35,6 @@ const userSchema = new mongoose.Schema<iUser>({
   googleId: {
     type: String,
     required: false,
-  },
-  cart: {
-    type: [
-      {
-        productId: { type: String, required: true },
-        quantity: { type: Number, required: true },
-      },
-    ],
-    default: [],
   },
 });
 
